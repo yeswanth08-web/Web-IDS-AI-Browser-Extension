@@ -41,6 +41,18 @@ flowchart TD
     L[Local API on 127.0.0.1:8765] <--> B
 ```
 
+## Visual previews
+
+The following are **conceptual UI mockups** created to illustrate the intended presentation. They are not screenshots of a live running build, and placeholder values are not measured results.
+
+| Extension popup | Browser warning |
+|---|---|
+| ![WebGuard AI extension popup conceptual mockup](docs/images/extension-popup-mockup.svg) | ![WebGuard AI browser warning conceptual mockup](docs/images/browser-warning-mockup.svg) |
+
+### Network monitoring dashboard
+
+![WebGuard AI network dashboard conceptual mockup](docs/images/network-dashboard-mockup.svg)
+
 ## Current capabilities
 
 | Component | Implemented functionality |
