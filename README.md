@@ -1,76 +1,110 @@
-# WebGuard AI — Web IDS Browser Extension
+# WebGuard AI — Browser Security & Network Intrusion Monitoring
 
-**Project status: In development**
+<p align="center">
+  <strong>An educational cybersecurity prototype combining browser activity heuristics with local network traffic monitoring.</strong>
+</p>
 
-WebGuard AI is a student cybersecurity project exploring browser-level website risk indicators and local network traffic monitoring. It currently contains two separate components:
+<p align="center">
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white">
+  <img alt="FastAPI" src="https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white">
+  <img alt="Chrome Extension" src="https://img.shields.io/badge/Browser-Chrome%20MV3-4285F4?logo=googlechrome&logoColor=white">
+  <img alt="Machine Learning" src="https://img.shields.io/badge/ML-Scikit--learn-F7931E?logo=scikitlearn&logoColor=white">
+  <img alt="Status" src="https://img.shields.io/badge/Status-In%20Development-orange">
+</p>
 
-1. **Chrome browser extension:** records per-tab navigation/request metadata and applies transparent, rule-based heuristics to highlight potentially unusual website activity.
-2. **Local Python network IDS:** uses Scapy to observe authorized local network traffic and raises heuristic alerts for patterns such as possible port sweeps, TCP SYN bursts, and unusually high packet rates. An optional Random Forest pipeline can be trained using a compatible labelled packet-feature CSV.
+> **Project status: In development.** WebGuard AI is a student project and an educational prototype—not a production security product. Alerts are indicators that require investigation, not proof that a website is malicious or a device is compromised.
 
-> This is an educational prototype, not a production security product. Heuristic alerts are indicators for investigation, not proof that a site or device is malicious or compromised. The browser extension does not currently use a trained ML model to classify websites. The optional ML model applies only to the backend packet-feature schema.
+## Overview
+
+WebGuard AI explores two complementary areas of defensive security:
+
+- **Browser activity monitoring:** a Chrome Manifest V3 extension collects navigation/request metadata and applies explainable, rule-based heuristics to highlight potentially unusual website activity.
+- **Local network intrusion monitoring:** a Python FastAPI service can use Scapy to observe authorized local network traffic and raise heuristic alerts for patterns such as possible port sweeps, TCP SYN bursts, and unusually high packet rates.
+
+The two components currently produce separate signals. The browser extension does **not** use a trained machine-learning model to classify websites. The optional Random Forest pipeline applies only to the backend's documented packet-feature schema.
+
+## Architecture
+
+```mermaid
+flowchart TD
+    A[Chrome browser] --> B[WebGuard AI extension]
+    B --> C[Navigation and request metadata]
+    C --> D[Rule-based browser heuristics]
+    D --> E[Popup telemetry and warning overlay]
+
+    F[Authorized local network] --> G[Scapy packet capture]
+    G --> H[FastAPI backend]
+    H --> I[Network heuristic rules]
+    H --> J[Optional packet-feature Random Forest]
+    I --> K[Recent IDS alerts]
+    J --> K
+    L[Local API on 127.0.0.1:8765] <--> B
+```
 
 ## Current capabilities
 
-### Browser extension
+| Component | Implemented functionality |
+|---|---|
+| Chrome extension | Manifest V3; per-tab navigation and completed-request metadata |
+| Browser telemetry | Request count/rate, unique domains, and third-party request ratio over a rolling 60-second window |
+| Browser heuristics | Explainable hostname and activity indicators; in-page warning when the combined score is high |
+| Local network IDS | Optional Scapy capture through a local FastAPI service |
+| Network heuristics | Possible port-sweep, TCP SYN-burst, and high-packet-rate alerts |
+| ML training baseline | Optional Random Forest training pipeline for the documented packet-feature CSV schema |
+| API | Health, status, capture start/stop, and recent-alert endpoints |
 
-- Chrome Manifest V3 extension.
-- Tracks top-level navigation and completed web-request metadata per tab.
-- Calculates request count, request rate, unique domains, and third-party request ratio over a rolling 60-second window.
-- Applies explainable hostname and activity heuristics and can display an in-page warning when the combined score is high.
-- Stores a bounded amount of telemetry locally in `chrome.storage.local`.
+## Technology stack
 
-### Local network IDS
+- **Browser:** JavaScript, Chrome Extensions Manifest V3, HTML, CSS
+- **Backend:** Python, FastAPI, Uvicorn, Scapy
+- **Machine learning:** pandas, scikit-learn, joblib
+- **Network representation/testing:** packet metadata and a local request-telemetry test page
 
-- FastAPI service bound to `127.0.0.1:8765`.
-- Optional Scapy packet capture on a selected local interface.
-- Heuristic alerts for possible port sweeps, TCP SYN bursts, and high packet rates.
-- Optional trained Random Forest classifier for the documented six-feature packet schema.
-- API endpoints for health, status, capture control, and recent alerts.
-
-## Repository layout
+## Repository structure
 
 ```text
 Web-IDS-AI-Browser-Extension/
-├── extension/                 # Chrome Manifest V3 extension
-│   ├── background/            # Browser event collection and heuristics
-│   ├── content/               # In-page warning overlay
-│   └── popup/                 # Extension dashboard
+├── extension/
+│   ├── background/       # Browser event collection and heuristics
+│   ├── content/          # In-page warning overlay
+│   └── popup/            # Extension dashboard
 ├── backend/
-│   ├── main.py                # Local FastAPI + Scapy network IDS
+│   ├── main.py           # Local FastAPI + Scapy network IDS
 │   ├── requirements.txt
 │   └── ml/
-│       ├── train_model.py     # Optional model-training pipeline
+│       ├── train_model.py
 │       └── README.md
-├── test-site/                 # Local request-volume test page
-├── .gitignore
+├── test-site/            # Local request-volume test page
 └── README.md
 ```
 
-## Requirements
+## Setup and usage
 
-- Windows 10/11, macOS, or Linux.
-- Python 3.11 or newer (Python 3.11–3.13 are the recommended tested range for the dependency set).
-- Google Chrome or a Chromium-based browser supporting Manifest V3.
-- Npcap on Windows for Scapy packet capture. Packet capture may require Administrator privileges.
+### Requirements
 
-## Run the local backend (Windows PowerShell)
+- Windows 10/11, macOS, or Linux
+- Python 3.11 or newer (Python 3.11–3.13 are the recommended tested range for this dependency set)
+- Google Chrome or another Chromium browser with Manifest V3 support
+- Npcap on Windows for Scapy packet capture; capture may require Administrator privileges
+
+### 1. Start the backend (Windows PowerShell)
 
 Open PowerShell in the `backend` directory:
 
 ```powershell
 py -3.11 -m venv .venv
-.\.venv\Scripts\Activate.ps1
+.\\.venv\\Scripts\\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python -m uvicorn main:app --host 127.0.0.1 --port 8765
 ```
 
-Check the service in a browser:
+Check the service:
 
-- `http://127.0.0.1:8765/health`
-- `http://127.0.0.1:8765/api/status`
+- http://127.0.0.1:8765/health
+- http://127.0.0.1:8765/api/status
 
-Start and inspect capture from a second PowerShell window:
+Use a second PowerShell window to inspect capture and alerts:
 
 ```powershell
 Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8765/api/capture/start -ContentType 'application/json' -Body '{}'
@@ -79,23 +113,21 @@ Invoke-RestMethod -Uri http://127.0.0.1:8765/api/alerts
 Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8765/api/capture/stop
 ```
 
-Packet capture requires the correct interface and operating-system permissions. If it fails, inspect `capture_error` in `/api/status`. Only capture traffic on systems and networks you own or have explicit permission to monitor.
+Packet capture depends on the selected interface and operating-system permissions. If capture fails, inspect `capture_error` in `/api/status`.
 
-## Load the Chrome extension
+### 2. Load the Chrome extension
 
-1. Open `chrome://extensions` in Chrome.
+1. Open `chrome://extensions`.
 2. Enable **Developer mode**.
-3. Select **Load unpacked**.
-4. Choose this repository's `extension` folder.
-5. Open a normal website and click the WebGuard AI extension icon to view telemetry.
+3. Click **Load unpacked**.
+4. Select the repository's `extension` folder.
+5. Open a website and click the WebGuard AI icon to view its telemetry.
 
-The extension communicates with the backend only through `127.0.0.1:8765`. The browser component cannot observe all packets on the computer; packet capture remains a separate backend function.
+The extension communicates with the backend through `127.0.0.1:8765`. Browser telemetry and packet capture are separate functions; the extension cannot observe every packet on the computer.
 
-## Optional ML model training
+### 3. Optional: train the packet-feature model
 
-No model is included in this repository. This is intentional: an unvalidated placeholder model would be misleading.
-
-The starter training script expects a labelled CSV containing these numeric columns:
+No trained model is included. The training script expects a labelled CSV with these numeric columns:
 
 ```text
 Length,TTL,Protocol,IsTCP,IsUDP,IsICMP,Label
@@ -104,37 +136,26 @@ Length,TTL,Protocol,IsTCP,IsUDP,IsICMP,Label
 Run from the `backend` directory:
 
 ```powershell
-python ml/train_model.py path\to\your_features.csv
+python ml/train_model.py path\\to\\your_features.csv
 ```
 
-The script performs a stratified hold-out split and prints precision, recall, F1, and a confusion matrix. It saves the model to `backend/ml/webguard_rf.joblib`; restart the API after training.
+The script performs a stratified hold-out split, reports precision, recall, F1 and a confusion matrix, and saves the model to `backend/ml/webguard_rf.joblib`. Restart the API after training.
 
-**Dataset note:** CIC-IDS2017/2018 are flow-oriented datasets. Their raw columns are not interchangeable with this packet-level schema. A documented feature extraction/mapping step is required before using them. For a credible evaluation, avoid random row leakage where possible by splitting by capture, time, or host, and report false-positive rate and detection latency in addition to precision/recall/F1.
+**Dataset compatibility:** CIC-IDS2017/2018 are flow-oriented datasets; their raw columns do not directly match this packet-level schema. A documented feature extraction/mapping step is needed. For stronger evaluation, avoid random-row leakage where possible by splitting by capture, time, or host, and report false-positive rate and detection latency as well as precision, recall, and F1.
 
-## Local browser test page
+### 4. Local browser telemetry test
 
-The `test-site` folder contains a page that issues a sequence of requests to its own local server. It is intended only to verify that the extension records request activity; it does not simulate malware or prove malicious-site detection.
+The `test-site` folder contains a page that generates a sequence of requests to its own local server. This checks whether the extension records request activity; it does **not** simulate malware or validate malicious-site detection.
 
-From the `test-site` directory, run:
+From the `test-site` directory:
 
 ```powershell
 py -m http.server 8000 --bind 127.0.0.1
 ```
 
-Then open `http://127.0.0.1:8000` in Chrome with the extension loaded.
+Then open http://127.0.0.1:8000 in Chrome with the extension loaded.
 
-## Important limitations and next development goals
-
-- Hostname wording, subdomain structure, request rate, and third-party request ratios are weak signals. Legitimate sites can exhibit these patterns; attackers can avoid them.
-- The extension does not currently query a threat-intelligence feed, inspect page content for phishing, validate certificates, or use a trained website-classification model.
-- HTTPS payloads are encrypted. The backend does not decrypt TLS traffic or inspect full application-layer request bodies.
-- Network rules are heuristic and can produce false positives. A suspected scan or SYN burst is not conclusive evidence of an attack.
-- The optional Random Forest is a packet-level baseline and is not pretrained. Its usefulness depends on compatible, representative labelled data and independent evaluation.
-- The browser heuristic score and backend IDS alerts are separate signals; they are not combined into a single AI confidence score.
-
-Planned work includes controlled test cases, improved feature engineering, documented datasets, precision/recall/F1 and false-positive evaluation, alert deduplication tests, and a clearer separation between heuristic indicators and ML predictions.
-
-## API reference
+## API endpoints
 
 | Method | Endpoint | Purpose |
 |---|---|---|
@@ -145,6 +166,25 @@ Planned work includes controlled test cases, improved feature engineering, docum
 | GET | `/api/alerts?limit=100` | Retrieve recent alerts |
 | DELETE | `/api/alerts` | Clear recent alerts |
 
+## Limitations and development roadmap
+
+### Known limitations
+
+- Hostname wording, subdomain structure, request rate, and third-party request ratios are weak signals. Legitimate sites may trigger them, and malicious sites may avoid them.
+- The extension does not currently query a threat-intelligence feed, inspect page content for phishing, validate certificates, or run a trained website-classification model.
+- HTTPS payloads are encrypted. The backend does not decrypt TLS traffic or inspect full application-layer request bodies.
+- Network rules are heuristic and can produce false positives. A suspected scan or SYN burst is not conclusive evidence of an attack.
+- The optional Random Forest is a packet-level baseline, not a pretrained model. Its usefulness depends on representative labelled data and independent evaluation.
+- Browser heuristic scores and backend IDS alerts are not combined into a single AI confidence score.
+
+### Planned improvements
+
+- Build controlled, repeatable test cases for browser and network detections.
+- Improve feature engineering and document dataset preparation.
+- Evaluate precision, recall, F1, false-positive rate, and detection latency.
+- Test alert deduplication and document known false positives.
+- Keep heuristic indicators clearly separated from machine-learning predictions.
+
 ## Responsible use
 
-Use packet capture only on networks/devices you own or are authorized to monitor. Keep the backend bound to loopback (`127.0.0.1`); do not expose it to a public or shared network for a demonstration. Do not use the test page or project to scan, stress, or probe third-party systems.
+Use packet capture only on devices and networks you own or have explicit permission to monitor. Keep the backend bound to loopback (`127.0.0.1`); do not expose it to a public or shared network for demonstrations. Do not use this project to scan, stress, or probe third-party systems.
