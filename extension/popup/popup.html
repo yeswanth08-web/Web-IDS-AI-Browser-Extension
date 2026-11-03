@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>WebGuard AI</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>WebGuard AI</h1>
+
+    <p class="status">Browser telemetry active</p>
+
+    <div class="card">
+        <h2>Telemetry</h2>
+        <p id="eventCount">Events: 0</p>
+    </div>
+
+    <div class="card">
+        <h2>Current Status</h2>
+        <p id="status">Waiting for browser activity...</p>
+    </div>
+
+    <div class="card">
+        <h2>Security Features</h2>
+
+        <p id="totalRequests">Total Requests: 0</p>
+        <p id="uniqueDomains">Unique Domains: 0</p>
+        <p id="navigationCount">Navigations: 0</p>
+        <p id="thirdPartyRequests">Third-Party Requests: 0</p>
+        <p id="thirdPartyRatio">Third-Party Ratio: 0</p>
+        <p id="burstRate">Request Burst Rate: 0</p>
+        <p class="hint">Metrics use a rolling 60-second window. Indicators do not prove a website is malicious.</p>
+
+    </div>
+
+    <div class="card detection-card">
+
+        <h2>Heuristic Website Assessment</h2>
+
+        <p>
+            <strong>Website:</strong>
+            <span id="detectedDomain">None</span>
+        </p>
+
+        <p>
+            <strong>Risk Score:</strong>
+            <span id="riskScore">0/100</span>
+        </p>
+
+        <p>
+            <strong>Risk Level:</strong>
+            <span id="riskLevel">LOW</span>
+        </p>
+
+        <h3>Assessment indicators</h3>
+
+        <ul id="reasons">
+            <li>No high-risk heuristic indicators recorded.</li>
+        </ul>
+
+    </div>
+
+
+    <div class="card">
+        <h2>Local Network IDS</h2>
+        <p id="backendStatus">Backend: checking localhost…</p>
+        <p id="packetCount">Packets observed: —</p>
+        <p id="modelStatus">ML model: —</p>
+        <div class="button-row">
+            <button id="startCaptureButton" type="button">Start Capture</button>
+            <button id="stopCaptureButton" type="button">Stop Capture</button>
+        </div>
+        <h3>Recent Network Alerts</h3>
+        <ul id="networkAlerts"><li>Waiting for backend…</li></ul>
+        <p class="hint">Capture requires the local Python backend and permission to monitor this network.</p>
+    </div>
+
+    <button id="clearButton">
+        Clear Telemetry
+    </button>
+
+</div>
+
+<script src="popup.js"></script>
+
+</body>
+</html>

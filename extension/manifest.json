@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "WebGuard AI",
+  "version": "0.2.0",
+  "description": "Educational browser risk heuristics and local network traffic monitoring prototype.",
+  "permissions": [
+    "storage",
+    "tabs",
+    "webNavigation",
+    "webRequest"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "http://127.0.0.1:8765/*"
+  ],
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content/warning-overlay.js"
+      ],
+      "css": [
+        "content/warning-overlay.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "WebGuard AI"
+  }
+}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGuard AI Local Telemetry Test</title>
+</head>
+<body>
+    <h1>WebGuard AI — Local Telemetry Test</h1>
+    <p>This page sends a limited sequence of requests to the same local server so you can verify browser request telemetry.</p>
+    <p>It does not simulate malware, phishing, or a real intrusion.</p>
+    <p id="status" aria-live="polite">Preparing test…</p>
+    <script>
+        const status = document.getElementById("status");
+        const total = 120;
+        let completed = 0;
+        async function runTest() {
+            for (let index = 0; index < total; index += 1) {
+                try {
+                    await fetch(`/telemetry-test-${index}?t=${Date.now()}`, { cache: "no-store" });
+                } catch {
+                    // A 404 response is acceptable; the browser request event is what is being tested.
+                }
+                completed += 1;
+                status.textContent = `Completed local requests: ${completed} / ${total}`;
+            }
+            status.textContent += " — check the WebGuard AI popup for request telemetry.";
+        }
+        runTest();
+    </script>
+</body>
+</html>

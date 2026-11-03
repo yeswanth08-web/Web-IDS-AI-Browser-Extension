@@ -1,0 +1,37 @@
+﻿body {
+    width: 350px;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+}
+
+.container {
+    padding: 20px;
+}
+
+h1 {
+    margin-top: 0;
+}
+
+.status {
+    font-weight: bold;
+}
+
+.card {
+    background: white;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.button-row { display: flex; gap: 8px; }
+.button-row button { flex: 1; font-size: 12px; padding: 8px 5px; }
+.hint { font-size: 11px; color: #777; line-height: 1.35; }
+#networkAlerts { padding-left: 18px; }
+#networkAlerts li { margin-bottom: 7px; overflow-wrap: anywhere; }

@@ -1,0 +1,157 @@
+#webguard-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483647;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+}
+
+.webguard-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.webguard-card {
+    position: relative;
+    width: min(680px, calc(100vw - 40px));
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    box-sizing: border-box;
+
+    background: white;
+    border-radius: 18px;
+    padding: 32px;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.35);
+
+    text-align: center;
+    color: #222;
+}
+
+.webguard-icon {
+    font-size: 52px;
+    margin-bottom: 8px;
+}
+
+.webguard-card h1 {
+    margin: 0 0 10px;
+    font-size: 28px;
+}
+
+.webguard-subtitle {
+    margin: 0;
+    color: #666;
+    line-height: 1.5;
+}
+
+.webguard-risk-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.webguard-risk-box div {
+    background: #f5f6f8;
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.webguard-risk-box span {
+    display: block;
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 6px;
+}
+
+.webguard-risk-box strong {
+    display: block;
+    font-size: 16px;
+}
+
+#wg-score {
+    font-size: 22px;
+}
+
+#wg-level {
+    color: #c62828;
+}
+
+.webguard-reasons {
+    margin-top: 20px;
+    padding: 18px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    text-align: left;
+}
+
+.webguard-reasons h3 {
+    margin-top: 0;
+}
+
+.webguard-reasons li {
+    margin-bottom: 8px;
+}
+
+.webguard-advice {
+    margin-top: 18px;
+    padding: 16px;
+    background: #fff0f0;
+    border-radius: 10px;
+    text-align: left;
+}
+
+.webguard-advice p {
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+.webguard-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.webguard-buttons button {
+    flex: 1;
+    border: none;
+    border-radius: 9px;
+    padding: 14px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.wg-back-button {
+    background: #222;
+    color: white;
+}
+
+.wg-continue-button {
+    background: #e0e0e0;
+    color: #222;
+}
+
+.webguard-buttons button:hover {
+    opacity: 0.85;
+}
+
+@media (max-width: 600px) {
+
+    .webguard-card {
+        padding: 22px;
+    }
+
+    .webguard-risk-box {
+        grid-template-columns: 1fr;
+    }
+
+    .webguard-buttons {
+        flex-direction: column;
+    }
+}
